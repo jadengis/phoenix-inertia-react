@@ -11,6 +11,11 @@ defmodule InertiaAppWeb.Application do
       InertiaAppWeb.Telemetry,
       # Start a worker by calling: InertiaAppWeb.Worker.start_link(arg)
       # {InertiaAppWeb.Worker, arg},
+
+      # Start the SSR process pool
+      # You must specify a `path` option to locate the directory where the `ssr.js` file lives.
+      {Inertia.SSR, path: Application.app_dir(:inertia_app_web, "priv")},
+
       # Start to serve requests, typically the last entry
       InertiaAppWeb.Endpoint
     ]

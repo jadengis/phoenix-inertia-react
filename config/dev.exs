@@ -22,8 +22,9 @@ config :inertia_app_web, InertiaAppWeb.Endpoint,
   debug_errors: true,
   secret_key_base: "NFCF/4tlWgb0/7ifQRuy/5oWlrFWXQ9piU8/GTAYBQki3g1o/PQzuCdsf2mKu5EK",
   watchers: [
-    esbuild: {Esbuild, :install_and_run, [:inertia_app_web, ~w(--sourcemap=inline --watch)]},
-    tailwind: {Tailwind, :install_and_run, [:inertia_app_web, ~w(--watch)]}
+    esbuild: {Esbuild, :install_and_run, [:web, ~w(--sourcemap=inline --watch)]},
+    ssr: {Esbuild, :install_and_run, [:ssr, ~w(--sourcemap=inline --watch)]},
+    tailwind: {Tailwind, :install_and_run, [:web, ~w(--watch)]}
   ]
 
 # ## SSL Support

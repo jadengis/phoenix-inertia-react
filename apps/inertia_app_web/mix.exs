@@ -58,7 +58,8 @@ defmodule InertiaAppWeb.MixProject do
       {:gettext, "~> 0.26"},
       {:inertia_app, in_umbrella: true},
       {:jason, "~> 1.2"},
-      {:bandit, "~> 1.5"}
+      {:bandit, "~> 1.5"},
+      {:inertia, "~> 2.4.0"}
     ]
   end
 
@@ -70,10 +71,11 @@ defmodule InertiaAppWeb.MixProject do
       setup: ["deps.get", "assets.setup", "assets.build"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
-      "assets.build": ["tailwind inertia_app_web", "esbuild inertia_app_web"],
+      "assets.build": ["tailwind web", "esbuild web", "esbuild ssr"],
       "assets.deploy": [
-        "tailwind inertia_app_web --minify",
-        "esbuild inertia_app_web --minify",
+        "tailwind web --minify",
+        "esbuild web --minify",
+        "esbuild ssr",
         "phx.digest"
       ]
     ]
