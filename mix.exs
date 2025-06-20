@@ -4,11 +4,28 @@ defmodule InertiaApp.Umbrella.MixProject do
   def project do
     [
       apps_path: "apps",
-      version: "0.1.0",
+      version: version(),
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       aliases: aliases(),
+      releases: releases(),
       listeners: [Phoenix.CodeReloader]
+    ]
+  end
+
+  @default_version "0.0.0-dev"
+  defp version() do
+    System.get_env("VERSION", @default_version)
+  end
+
+  defp releases do
+    [
+      inertia_app_web: [
+        applications: [
+          inertia_app: :permanent,
+          inertia_app_web: :permanent
+        ]
+      ]
     ]
   end
 
@@ -28,7 +45,14 @@ defmodule InertiaApp.Umbrella.MixProject do
     [
       {:phoenix, "~> 1.8.0-rc.3", override: true},
       # Required to run "mix format" on ~H/.heex files from the umbrella root
-      {:phoenix_live_view, ">= 0.0.0"}
+      {:phoenix_live_view, ">= 0.0.0"},
+      {:heroicons,
+       github: "tailwindlabs/heroicons",
+       tag: "v2.1.1",
+       sparse: "optimized",
+       app: false,
+       compile: false,
+       depth: 1}
     ]
   end
 
@@ -44,7 +68,16 @@ defmodule InertiaApp.Umbrella.MixProject do
   defp aliases do
     [
       # run `mix setup` in all child apps
-      setup: ["cmd mix setup"]
+
+      setup: ["deps.get", "assets.setup", "assets.build", "cmd mix setup"],
+      "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
+      "assets.build": ["tailwind web", "esbuild web", "esbuild ssr"],
+      "assets.deploy": [
+        "tailwind web --minify",
+        "esbuild web --minify",
+        "esbuild ssr",
+        "do assets.deploy"
+      ]
     ]
   end
 end

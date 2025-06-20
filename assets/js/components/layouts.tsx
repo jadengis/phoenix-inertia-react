@@ -1,74 +1,54 @@
-import React, { useEffect, useState } from 'react';
 import { ComputerDesktopIcon, MoonIcon, SunIcon } from '@heroicons/react/24/solid'
-import { Flash, Icon } from './core-components';
+import React, { useEffect, useState } from 'react'
+import { Flash, Icon } from './core-components'
 
-// Flash Group Component
-interface FlashGroupProps {
-  flash: Record<string, string>;
-  id?: string;
-  connectionStatus?: 'connected' | 'disconnected';
+type FlashGroupProps = {
+  flash: Record<string, string>
+  id?: string
+  connectionStatus?: 'connected' | 'disconnected'
 }
 
-export const FlashGroup: React.FC<FlashGroupProps> = ({ 
-  flash, 
-  id = "flash-group",
-  connectionStatus = 'connected' 
-}) => {
-  const [clientError, setClientError] = useState(false);
-  const [serverError, setServerError] = useState(false);
+export function FlashGroup({ flash, id = 'flash-group', connectionStatus = 'connected' }: FlashGroupProps) {
+  const [clientError, setClientError] = useState(false)
+  const [serverError, setServerError] = useState(false)
 
   // Simulate connection status changes (in a real app, this would come from your WebSocket/network layer)
   useEffect(() => {
     if (connectionStatus === 'disconnected') {
       // In a real app, you'd determine if it's a client or server error
-      setClientError(true);
+      setClientError(true)
     } else {
-      setClientError(false);
-      setServerError(false);
+      setClientError(false)
+      setServerError(false)
     }
-  }, [connectionStatus]);
+  }, [connectionStatus])
 
   return (
     <div id={id} aria-live="polite">
       <Flash kind="info" flash={flash} />
       <Flash kind="error" flash={flash} />
 
-      <Flash
-        id="client-error"
-        kind="error"
-        title="We can't find the internet"
-        hidden={!clientError}
-      >
+      <Flash id="client-error" kind="error" title="We can't find the internet" hidden={!clientError}>
         Attempting to reconnect
         <Icon name="hero-arrow-path" className="ml-1 size-3 motion-safe:animate-spin" />
       </Flash>
 
-      <Flash
-        id="server-error"
-        kind="error"
-        title="Something went wrong!"
-        hidden={!serverError}
-      >
+      <Flash id="server-error" kind="error" title="Something went wrong!" hidden={!serverError}>
         Attempting to reconnect
         <Icon name="hero-arrow-path" className="ml-1 size-3 motion-safe:animate-spin" />
       </Flash>
     </div>
-  );
-};
-
-// App Layout Component
-interface AppLayoutProps {
-  flash: Record<string, string>;
-  currentScope?: Record<string, any>;
-  children: React.ReactNode;
-  appVersion?: string;
+  )
 }
 
-export const AppLayout: React.FC<AppLayoutProps> = ({ 
-  flash, 
-  children,
-  appVersion = "1.0.0"
-}) => {
+type AppLayoutProps = {
+  flash: Record<string, string>
+  currentScope?: Record<string, unknown>
+  children: React.ReactNode
+  appVersion?: string
+}
+
+export function AppLayout({ flash, children, appVersion = '1.0.0' }: AppLayoutProps) {
   return (
     <>
       <header className="navbar px-4 sm:px-6 lg:px-8">
@@ -81,10 +61,14 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
         <div className="flex-none">
           <ul className="flex flex-column px-1 space-x-4 items-center">
             <li>
-              <a href="https://phoenixframework.org/" className="btn btn-ghost">Website</a>
+              <a href="https://phoenixframework.org/" className="btn btn-ghost">
+                Website
+              </a>
             </li>
             <li>
-              <a href="https://github.com/phoenixframework/phoenix" className="btn btn-ghost">GitHub</a>
+              <a href="https://github.com/phoenixframework/phoenix" className="btn btn-ghost">
+                GitHub
+              </a>
             </li>
             <li>
               <ThemeToggle />
@@ -99,15 +83,13 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       </header>
 
       <main className="px-4 py-20 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-2xl space-y-4">
-          {children}
-        </div>
+        <div className="mx-auto max-w-2xl space-y-4">{children}</div>
       </main>
 
       <FlashGroup flash={flash} />
     </>
-  );
-};
+  )
+}
 
 export function ThemeToggle() {
   return (

@@ -1,7 +1,7 @@
 import { createInertiaApp } from '@inertiajs/react'
 import ReactDOMServer from 'react-dom/server'
 
-export function render(page: any) {
+export function render(page: Parameters<typeof createInertiaApp>[0]['page']) {
   return createInertiaApp({
     page,
     render: ReactDOMServer.renderToString,

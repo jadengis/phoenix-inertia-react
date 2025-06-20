@@ -6,5 +6,5 @@
     "checkJs": true,
     "isolatedModules": true
   },
-  "include": ["js/**/*.ts","js/**/*.tsx"]
+  "include": ["js/**/*.ts", "js/**/*.tsx"]
 }

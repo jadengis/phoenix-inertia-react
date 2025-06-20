@@ -2,22 +2,21 @@ import type {
   ButtonHTMLAttributes,
   HTMLAttributes,
   InputHTMLAttributes,
-  ReactNode,
   SelectHTMLAttributes,
   TextareaHTMLAttributes,
 } from 'react'
 import React, { useState } from 'react'
 
 // Flash Component
-interface FlashProps extends HTMLAttributes<HTMLDivElement> {
+type FlashProps = HTMLAttributes<HTMLDivElement> & {
   id?: string
   flash?: Record<string, string>
   title?: string
   kind: 'info' | 'error'
-  children?: ReactNode
+  children?: React.ReactNode
 }
 
-export const Flash: React.FC<FlashProps> = ({ id, flash = {}, title, kind, children, ...rest }) => {
+export function Flash({ id, flash = {}, title, kind, children, ...rest }: FlashProps) {
   const message = children || flash[kind]
   const flashId = id || `flash-${kind}`
   const [isOpen, setIsOpen] = useState(!!message)
@@ -50,26 +49,16 @@ export const Flash: React.FC<FlashProps> = ({ id, flash = {}, title, kind, child
   )
 }
 
-// Button Component
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: 'primary'
   href?: string
   navigate?: string
   patch?: string
   method?: string
-  children: ReactNode
+  children: React.ReactNode
 }
 
-export const Button: React.FC<ButtonProps> = ({
-  variant,
-  href,
-  navigate,
-  patch,
-  method,
-  children,
-  className,
-  ...rest
-}) => {
+export function Button({ variant, href, navigate, patch, method, children, className, ...rest }: ButtonProps) {
   const variants = {
     primary: 'btn-primary',
     undefined: 'btn-primary btn-soft',
@@ -95,23 +84,24 @@ export const Button: React.FC<ButtonProps> = ({
 
 // Error Component
 interface ErrorProps {
-  children: ReactNode
+  children: React.ReactNode
 }
 
-const Error: React.FC<ErrorProps> = ({ children }) => (
-  <p className="mt-1.5 flex gap-2 items-center text-sm text-error">
-    <Icon name="hero-exclamation-circle" className="size-5" />
-    {children}
-  </p>
-)
+function Error({ children }: ErrorProps) {
+  return (
+    <p className="mt-1.5 flex gap-2 items-center text-sm text-error">
+      <Icon name="hero-exclamation-circle" className="size-5" />
+      {children}
+    </p>
+  )
+}
 
 // Input Component
-interface InputProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>, 'type'> {
+type InputProps = Omit<InputHTMLAttributes<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>, 'type'> & {
   id?: string
   name?: string
   label?: string
-  value?: any
+  value?: InputHTMLAttributes<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>['value']
   type?:
     | 'checkbox'
     | 'color'
@@ -138,7 +128,7 @@ interface InputProps
   errorClass?: string
 }
 
-export const Input: React.FC<InputProps> = ({
+export function Input({
   id,
   name,
   label,
@@ -152,7 +142,7 @@ export const Input: React.FC<InputProps> = ({
   className,
   errorClass,
   ...rest
-}) => {
+}: InputProps) {
   if (type === 'checkbox') {
     return (
       <fieldset className="fieldset mb-2">
@@ -164,7 +154,7 @@ export const Input: React.FC<InputProps> = ({
               id={id}
               name={name}
               value="true"
-              checked={checked || value}
+              checked={checked || !!value}
               className={className || 'checkbox checkbox-sm'}
               {...(rest as InputHTMLAttributes<HTMLInputElement>)}
             />
@@ -248,14 +238,14 @@ export const Input: React.FC<InputProps> = ({
 }
 
 // Header Component
-interface HeaderProps {
+type HeaderProps = {
   className?: string
-  children: ReactNode
-  subtitle?: ReactNode
-  actions?: ReactNode
+  children: React.ReactNode
+  subtitle?: React.ReactNode
+  actions?: React.ReactNode
 }
 
-export const Header: React.FC<HeaderProps> = ({ className, children, subtitle, actions }) => {
+export function Header({ className, children, subtitle, actions }: HeaderProps) {
   const classes = [actions && 'flex items-center justify-between gap-6', 'pb-4', className].filter(Boolean).join(' ')
 
   return (
@@ -270,16 +260,16 @@ export const Header: React.FC<HeaderProps> = ({ className, children, subtitle, a
 }
 
 // Table Component
-interface TableColumn<T> {
+type TableColumn<T> = {
   label: string
-  render: (item: T) => ReactNode
+  render: (item: T) => React.ReactNode
 }
 
-interface TableAction<T> {
-  render: (item: T) => ReactNode
+type TableAction<T> = {
+  render: (item: T) => React.ReactNode
 }
 
-interface TableProps<T> {
+type TableProps<T> = {
   id: string
   rows: T[]
   rowId?: (row: T) => string
@@ -338,16 +328,16 @@ export function Table<T>({ id, rows, rowId, rowClick, rowItem = (row) => row, co
 }
 
 // List Component
-interface ListItem {
+type ListItem = {
   title: string
-  content: ReactNode
+  content: React.ReactNode
 }
 
-interface ListProps {
+type ListProps = {
   items: ListItem[]
 }
 
-export const List: React.FC<ListProps> = ({ items }) => {
+export function List({ items }: ListProps) {
   return (
     <ul className="list">
       {items.map((item, idx) => (
@@ -363,12 +353,12 @@ export const List: React.FC<ListProps> = ({ items }) => {
 }
 
 // Icon Component
-interface IconProps {
+type IconProps = {
   name: string
   className?: string
 }
 
-export const Icon: React.FC<IconProps> = ({ name, className = 'size-4' }) => {
+export function Icon({ name, className = 'size-4' }: IconProps) {
   if (name.startsWith('hero-')) {
     return <span className={`${name} ${className}`} />
   }

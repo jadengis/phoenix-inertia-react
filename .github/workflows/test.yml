@@ -1,0 +1,68 @@
+name: Test
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    name: Backend
+    env:
+      MIX_ENV: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+          cache: npm
+          cache-dependency-path: assets/package-lock.json
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: '27'
+          elixir-version: '1.18'
+      - uses: actions/cache@v4
+        id: deps-cache
+        with:
+          path: deps
+          key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-mix-${{ env.cache-name }}-
+      - uses: actions/cache@v4
+        id: cache-build
+        env:
+          cache-name: cache-compiled-build
+        with:
+          path: _build
+          key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-mix-${{ env.cache-name }}-
+            ${{ runner.os }}-mix-
+      - run: mix local.hex --force
+      - run: mix local.rebar --force
+      - run: mix deps.get
+      - run: mix compile --warnings-as-errors --return-errors
+      - run: npm --prefix ./assets/ ci
+      - run: mix assets.build
+      - run: mix format --check-formatted
+      - run: mix test
+  frontend:
+    runs-on: ubuntu-latest
+    name: Frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+          cache: npm
+          cache-dependency-path: assets/package-lock.json
+      - run: npm --prefix ./assets/ ci
+      - run: npm --prefix ./assets/ run format:check
+      - run: npm --prefix ./assets/ run lint
+      - run: npm --prefix ./assets/ run typecheck
+      - run: npm --prefix ./assets/ run test

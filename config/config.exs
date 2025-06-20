@@ -42,14 +42,14 @@ config :esbuild,
   version: "0.25.5",
   web: [
     args:
-      ~w(js/app.tsx --bundle --splitting --format=esm --target=es2022 --outdir=../priv/static/assets/js --external:/fonts/* --external:/images/*),
-    cd: Path.expand("../apps/inertia_app_web/assets", __DIR__),
+      ~w(js/app.tsx --bundle --splitting --format=esm --target=es2022 --outdir=../apps/inertia_app_web/priv/static/assets/js --external:/fonts/* --external:/images/*),
+    cd: Path.expand("../assets", __DIR__),
     env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
   ],
   ssr: [
     args:
-      ~w(js/ssr.tsx --bundle --platform=node --format=cjs --outdir=../priv),
-    cd: Path.expand("../apps/inertia_app_web/assets", __DIR__),
+      ~w(js/ssr.tsx --bundle --platform=node --format=cjs --outdir=../apps/inertia_app_web/priv),
+    cd: Path.expand("../assets", __DIR__),
     env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
   ]
 
@@ -59,9 +59,9 @@ config :tailwind,
   web: [
     args: ~w(
       --input=assets/css/app.css
-      --output=priv/static/assets/css/app.css
+      --output=apps/inertia_app_web/priv/static/assets/css/app.css
     ),
-    cd: Path.expand("../apps/inertia_app_web", __DIR__)
+    cd: Path.expand("..", __DIR__)
   ]
 
 # Configures Elixir's Logger
